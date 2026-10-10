@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  --primary: rgb(23, 54, 73);
+  --secondary: rgb(165, 133, 78);
+}
+
+html {
+  direction: rtl;
+}
+
+@theme {
+  --animate-soft-bounce: softBounce 1.6s ease-in-out infinite;
+  --animate-nudge: nudge 1.4s ease-in-out infinite;
+
+  @keyframes softBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  @keyframes nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-6px); }
+  }
+}
+
+body {
+  margin: 0;
+  font-family: "Tajawal", Arial, sans-serif;
+  background: white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
