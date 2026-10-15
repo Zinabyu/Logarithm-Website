@@ -2,14 +2,8 @@ import { ArrowLeft, Menu, X } from "lucide-react"
 import { useState } from "react"
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom"
 import logo from "../assets/logo.jpg"
-
-const links = [
-  { label: "الرئيسية", to: "/", end: true, home: true },
-  { label: "من نحن", to: "/about" },
-  { label: "خدماتنا", to: "/services" },
- 
-  { label: "تواصل معنا", to: "/contact" },
-]
+import { usePage } from "../context/ContentContext.jsx"
+import { SITE_DEFAULTS } from "../data/defaults.js"
 
 const desktopLink = (home) => ({ isActive }) =>
   `relative rounded-lg px-4 py-2 text-[16px] font-bold transition-all duration-300 active:scale-95
@@ -30,9 +24,18 @@ const mobileLink = (home) => ({ isActive }) =>
    ${isActive ? "text-[#a5854e] after:scale-x-100" : "text-[#173649] after:scale-x-0"}`
 
 function Navbar() {
+  const { data: s } = usePage("site", SITE_DEFAULTS)
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { pathname } = useLocation()
+
+  // المسارات ثابتة في الكود، والأسماء بتيجي من لوحة التحكم
+  const links = [
+    { label: s.navHome, to: "/", end: true, home: true },
+    { label: s.navAbout, to: "/about" },
+    { label: s.navServices, to: "/services" },
+    { label: s.navContact, to: "/contact" },
+  ]
 
   const goBack = () => (window.history.state?.idx > 0 ? navigate(-1) : navigate("/"))
 
@@ -74,7 +77,7 @@ function Navbar() {
           {pathname !== "/" && (
             <button
               onClick={goBack}
-              aria-label="رجوع"
+              aria-label={s.navBack}
               className="group flex h-8 items-center overflow-hidden rounded-full bg-[#173649] px-2 text-[#e0c78c] shadow-md ring-1 ring-[#a5854e]/40 transition-all duration-500 hover:bg-[#a5854e] hover:text-white hover:shadow-lg active:scale-95 md:h-10 md:px-2.5"
             >
               <ArrowLeft
@@ -82,7 +85,7 @@ function Navbar() {
                 className="h-4 w-4 shrink-0 transition-transform duration-500 group-hover:-translate-x-0.5 md:h-5 md:w-5"
               />
               <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-bold opacity-0 transition-all duration-500 group-hover:ms-2 group-hover:max-w-[60px] group-hover:opacity-100">
-                رجوع
+                {s.navBack}
               </span>
             </button>
           )}

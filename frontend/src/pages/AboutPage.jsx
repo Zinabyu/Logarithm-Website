@@ -3,23 +3,8 @@ import { Link } from "react-router-dom"
 import { ArrowLeft, BadgeCheck, Calculator, ChevronDown, FileCheck2, Handshake, Layers, Scale, ScrollText, ShieldCheck, Target } from "lucide-react"
 import heroImg from "../assets/hero-illustration.jpg"
 import sideImg from "../assets/aboutsection.jpg"
-
-const values = [
-  { icon: BadgeCheck, title: "الاعتماد والتمثيل الرسمي", text: "بصفتنا وكيل ضريبي معتمد، نلتزم بالتمثيل القانوني والمهني المباشر والدقيق أمام الهيئة الاتحادية للضرائب." },
-  { icon: Scale, title: "الانضباط والدقة", text: "التعامل مع القوائم والمعاملات المالية بمعايير محاسبية صارمة تمنع الأخطاء وتضمن سلامة الموقف المالي." },
-  { icon: ShieldCheck, title: "الوقاية والحماية المالية", text: "الحفاظ على أمان الملف الضريبي للشركة وتجنب المخاطر والغرامات الناتجة عن أخطاء القيد أو التفسير الضريبي." },
-  { icon: Handshake, title: "الشراكة المستدامة", text: "العمل عن قرب مع الإدارة كفريق مالي متكامل يسهم في بناء القرارات واستقرار الأعمال." },
-]
-
-const vision = [
-  { icon: Target, title: "رؤيتنا", text: "أن نكون نموذجاً مرجعياً في تقديم الخدمات المحاسبية والتمثيل الضريبي في دولة الإمارات، من خلال إرساء حلول مالية دقيقة ومحكمة تتوافق تماماً مع الأنظمة والتشريعات المحلية." },
-  { icon: ScrollText, title: "رسالتنا", text: "تمكين مؤسسات الأعمال من إدارة دوراتها المالية بثقة والامتثال التام لمتطلبات الهيئة الاتحادية للضرائب، عبر التكامل المباشر بين التطبيق المحاسبي الصحيح والتخطيط الضريبي الوقائي." },
-]
-
-const pillars = [
-  { icon: Calculator, title: "أولاً: الخبرة المحاسبية التأسيسية", text: "بناء وتوجيه الدفاتر والقوائم المالية وفق المعايير الدولية، لضمان حصول الإدارة على صورة واقعية وشاملة عن أداء الشركة وربحيتها." },
-  { icon: FileCheck2, title: "ثانياً: التوجيه والامتثال الضريبي التخصصي", text: "صياغة ومعالجة كافة البيانات المحاسبية لتكون منذ لحظة القيد الأولى مهيأة ومتوافقة مع قانون ضريبة القيمة المضافة وضريبة الشركات." },
-]
+import { usePage } from "../context/ContentContext.jsx"
+import { ABOUT_DEFAULTS } from "../data/defaults.js"
 
 const wrap = "mx-auto max-w-7xl px-5 lg:px-10"
 const card = "rounded-2xl border border-[#ddd7cc] border-r-4 border-r-[#a5854e] bg-[#fdfcf9] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#a5854e] hover:shadow-xl"
@@ -57,6 +42,26 @@ function SectionTitle({ children }) {
 }
 
 export default function AboutPage() {
+  const { data: c } = usePage("about", ABOUT_DEFAULTS)
+
+  // الأيقونات ثابتة في الكود، والنصوص بتيجي من لوحة التحكم
+  const vision = [
+    { icon: Target, title: c.visionTitle, text: c.visionText },
+    { icon: ScrollText, title: c.missionTitle, text: c.missionText },
+  ]
+
+  const values = [
+    { icon: BadgeCheck, title: c.value1Title, text: c.value1Text },
+    { icon: Scale, title: c.value2Title, text: c.value2Text },
+    { icon: ShieldCheck, title: c.value3Title, text: c.value3Text },
+    { icon: Handshake, title: c.value4Title, text: c.value4Text },
+  ]
+
+  const pillars = [
+    { icon: Calculator, title: c.pillar1Title, text: c.pillar1Text },
+    { icon: FileCheck2, title: c.pillar2Title, text: c.pillar2Text },
+  ]
+
   const [philosophy, setPhilosophy] = useState(false)
   const [diff, setDiff] = useState(false)
   const [accred, setAccred] = useState(false)
@@ -91,20 +96,20 @@ export default function AboutPage() {
           <div className="max-w-[560px] text-white">
             <span className="group mb-5 inline-flex max-w-full cursor-default items-center gap-3 rounded-full border border-[#a5854e]/40 bg-white/10 px-4 py-2 text-xs font-medium text-[#e8dcc0] transition-all duration-300 hover:border-[#a5854e] hover:bg-white/15 hover:text-white sm:px-5 sm:text-sm">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#a5854e] transition-transform duration-300 group-hover:scale-[1.6]" />
-              لوغاريتم للمحاسبة والاستشارات الضريبية
+              {c.heroBadge}
             </span>
 
             <h1 className="text-[28px] font-extrabold leading-[1.5] md:text-[40px]">
-              دعمكم للامتثال الضريبي،
-              <span className="block text-[#a5854e]">ودقة الحسابات</span>
+              {c.heroTitle1}
+              <span className="block text-[#a5854e]">{c.heroTitle2}</span>
             </h1>
 
             <p className="mb-6 mt-4 text-[15px] font-medium leading-8 text-white/80 md:text-[16px]">
-              نحول بياناتك المالية إلى رؤى واضحة وتوصيات عملية تدعمك في اتخاذ القرارات، بينما نتولى عنك تعقيدات المحاسبة والضرائب.
+              {c.heroText}
             </p>
 
             <Link to="/contact" className="animate-soft-bounce inline-flex items-center justify-center gap-2 rounded-lg bg-[#a5854e] px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:animate-none hover:bg-[#967743] md:gap-3 md:rounded-xl md:px-7 md:py-3 md:text-base">
-              احجز استشارتك الآن
+              {c.heroButton}
               <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
             </Link>
           </div>
@@ -114,20 +119,14 @@ export default function AboutPage() {
       {/* Philosophy + image */}
       <section className={`${wrap} grid items-start gap-8 py-12 md:py-20 lg:grid-cols-[1.35fr_1fr] lg:gap-10`}>
         <div ref={cardRef} className={`${card} p-6 md:p-10`}>
-          <h2 className="mb-4 text-xl font-extrabold md:text-3xl">فلسفة الاسم والمنهج</h2>
-          <p className={body}>
-            تأسست لوغاريتم للمحاسبة والاستشارات الضريبية في دبي لتكون الشريك المالي المستدام للشركات ومؤسسات الأعمال والأفراد في دولة الإمارات العربية المتحدة.
-          </p>
+          <h2 className="mb-4 text-xl font-extrabold md:text-3xl">{c.philosophyTitle}</h2>
+          <p className={body}>{c.philosophyText1}</p>
 
           <div ref={expRef}>
             <Expand open={philosophy}>
               <div className="space-y-4 pt-4">
-                <p className={body}>
-                  جاء اختيار اسم «لوغاريتم» مستلهماً من المفهوم الرياضي القائم على تفكيك الأرقام المعقدة إلى صور مبسطة وقابلة للحل والإدارة. وفي عالم المال والضرائب، تمثل المعاملات اليومية والتشريعات الضريبية بيئة متداخلة تتطلب معالجة دقيقة بدون مساحة للخطأ.
-                </p>
-                <p className={body}>
-                  دورنا في لوغاريتم يتجاوز القيد التقليدي؛ نحن نعمل على فك تعقيد المشهد المالي والضريبي لشركتك، وتحويل المعاملات والمتطلبات التشريعية إلى مسار سهل ومنظم يتسم بالوضوح المطلق والدقة الضريبية، مما يتيح للإدارة التركيز الكامل على نمو وتوسيع الأعمال.
-                </p>
+                <p className={body}>{c.philosophyText2}</p>
+                <p className={body}>{c.philosophyText3}</p>
               </div>
             </Expand>
           </div>
@@ -152,16 +151,16 @@ export default function AboutPage() {
               <BadgeCheck className="h-6 w-6 md:h-9 md:w-9" strokeWidth={1.6} />
             </div>
             <h3 className="text-base font-extrabold leading-snug text-[#173649] transition-colors duration-300 group-hover:text-[#3d6785] md:text-2xl">
-              الصفة والاعتماد الرسمي (الوكيل الضريبي المعتمد)
+              {c.accredTitle}
             </h3>
           </div>
 
           <p className={`${bodySm} mt-3 transition-colors duration-300 group-hover:text-[#3d6785] md:mt-4`}>
-            بصفتنا وكيل ضريبي معتمد ومسجل لدى الهيئة الاتحادية للضرائب، نمنح ملف شركتك المالي والضريبي الغطاء القانوني والاعتماد الرسمي اللازم.
+            {c.accredText1}
           </p>
           <Expand open={accred}>
             <p className={`${bodySm} pt-2 transition-colors duration-300 group-hover:text-[#3d6785]`}>
-              وذلك أمام السلطات الضريبية وفق أحكام قانون الإجراءات الضريبية في دولة الإمارات العربية المتحدة.
+              {c.accredText2}
             </p>
           </Expand>
           <MoreButton open={accred} onClick={() => setAccred(!accred)} more="عرض المزيد" less="عرض أقل" />
@@ -170,10 +169,10 @@ export default function AboutPage() {
 
       {/* Vision / Mission */}
       <section className={`${wrap} pb-12 md:pb-20`}>
-        <SectionTitle>رؤيتنا ورسالتنا</SectionTitle>
+        <SectionTitle>{c.visionSectionTitle}</SectionTitle>
         <div className="grid gap-4 md:grid-cols-2 md:gap-8">
-          {vision.map(({ icon: Icon, title, text }) => (
-            <article key={title} className={`${card} group px-4 py-5 md:p-10`}>
+          {vision.map(({ icon: Icon, title, text }, i) => (
+            <article key={i} className={`${card} group px-4 py-5 md:p-10`}>
               <div className="mb-3 flex items-center gap-3 md:mb-4 md:gap-4">
                 <div className={`${iconBox} h-11 w-11 md:h-16 md:w-16`}><Icon className="h-5 w-5 md:h-[30px] md:w-[30px]" strokeWidth={1.6} /></div>
                 <h3 className="text-lg font-extrabold md:text-2xl">{title}</h3>
@@ -186,10 +185,10 @@ export default function AboutPage() {
 
       {/* Values */}
       <section className={`${wrap} pb-12 md:pb-20`}>
-        <SectionTitle>قيمنا الجوهرية</SectionTitle>
+        <SectionTitle>{c.valuesSectionTitle}</SectionTitle>
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
-          {values.map(({ icon: Icon, title, text }) => (
-            <article key={title} className={`${card} group px-4 py-5 sm:p-6 sm:text-center`}>
+          {values.map(({ icon: Icon, title, text }, i) => (
+            <article key={i} className={`${card} group px-4 py-5 sm:p-6 sm:text-center`}>
               <div className="mb-3 flex items-center gap-3 sm:mb-4 sm:flex-col sm:gap-4">
                 <div className={`${iconBox} h-11 w-11 sm:h-16 sm:w-16`}><Icon className="h-5 w-5 sm:h-[30px] sm:w-[30px]" strokeWidth={1.6} /></div>
                 <h3 className="text-base font-extrabold sm:text-lg">{title}</h3>
@@ -202,24 +201,20 @@ export default function AboutPage() {
 
       {/* Differentiators */}
       <section className={`${wrap} pb-14 md:pb-20`}>
-        <SectionTitle>ما يميزنا</SectionTitle>
+        <SectionTitle>{c.diffSectionTitle}</SectionTitle>
         <div className={`${card} group px-4 py-5 md:p-10`}>
           <div className="mb-3 flex items-center gap-3 md:mb-4 md:gap-4">
             <div className={`${iconBox} h-11 w-11 md:h-16 md:w-16`}><Layers className="h-5 w-5 md:h-7 md:w-7" strokeWidth={1.6} /></div>
-            <h3 className="text-lg font-extrabold md:text-2xl">التكامل المحاسبي والضريبي</h3>
+            <h3 className="text-lg font-extrabold md:text-2xl">{c.diffTitle}</h3>
           </div>
-          <p className={bodySm}>
-            غالبًا ما تواجه الشركات فجوة بين العمل المحاسبي اليومي ومتطلبات الامتثال الضريبي، حيث يُنفصل التوثيق عن التكليف.
-          </p>
+          <p className={bodySm}>{c.diffText1}</p>
 
           <Expand open={diff}>
             <div className="pt-4">
-              <p className={bodySm}>
-                في لوغاريتم، نلغي الحاجة للتنسيق بين محاسب مستقل واستشاري ضريبي خارجي؛ حيث نضمن اتساق الدفاتر المالية مع الإقرارات الضريبية المقدمة للهيئة الاتحادية للضرائب بدون تعارض أو فروقات، وذلك من خلال العمل باتجاهين متكاملين:
-              </p>
+              <p className={bodySm}>{c.diffText2}</p>
               <div className="mt-5 grid gap-4 md:grid-cols-2 md:gap-5">
-                {pillars.map(({ icon: Icon, title, text }) => (
-                  <article key={title} className="rounded-2xl border border-[#ddd7cc] border-t-4 border-t-[#a5854e] bg-[#f7f5f0] px-4 py-5 md:p-6">
+                {pillars.map(({ icon: Icon, title, text }, i) => (
+                  <article key={i} className="rounded-2xl border border-[#ddd7cc] border-t-4 border-t-[#a5854e] bg-[#f7f5f0] px-4 py-5 md:p-6">
                     <div className="mb-3 flex items-center gap-3 text-[#a5854e]">
                       <Icon size={24} strokeWidth={1.6} className="shrink-0" />
                       <h4 className="text-base font-extrabold text-[#173649]">{title}</h4>

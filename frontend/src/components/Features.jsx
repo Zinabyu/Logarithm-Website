@@ -1,19 +1,25 @@
 import { BadgeCheck, Clock3, Handshake, ShieldCheck } from "lucide-react"
+import { usePage } from "../context/ContentContext.jsx"
+import { HOME_DEFAULTS } from "../data/defaults.js"
 
-const features = [
-  { icon: BadgeCheck, title: "وكيل ضريبي معتمد", description: "TAN 00000000000" },
-  { icon: Handshake, title: "دقة واحترافية", description: "امتثال للمعايير المحاسبية والضرائب" },
-  { icon: ShieldCheck, title: "ثقة وشفافية", description: "شريكك المالي الموثوق" },
-  { icon: Clock3, title: "سرعة والتزام", description: "الالتزام بالمواعيد المحددة" },
-]
+// الأيقونات ثابتة في الكود، والنصوص بتيجي من لوحة التحكم
+const ICONS = [BadgeCheck, Handshake, ShieldCheck, Clock3]
 
 function Features() {
+  const { data: c } = usePage("home", HOME_DEFAULTS)
+
+  const features = ICONS.map((icon, idx) => ({
+    icon,
+    title: c[`feature${idx + 1}Title`],
+    description: c[`feature${idx + 1}Text`],
+  }))
+
   return (
     <section className="relative z-10 mx-auto -mt-10 max-w-6xl px-5 md:-mt-14 md:px-6">
       <div className="grid gap-3 md:grid-cols-4 md:gap-0 md:rounded-3xl md:border-x-4 md:border-[#a5854e] md:bg-white md:shadow-xl">
         {features.map(({ icon: Icon, title, description }, i) => (
           <div
-            key={title}
+            key={i}
             className={`group flex cursor-default items-center gap-4 rounded-2xl bg-white px-5 py-3.5 shadow-md transition-all duration-300 hover:shadow-xl md:flex-col md:gap-0 md:px-6 md:py-8 md:text-center md:shadow-none md:hover:relative md:hover:z-10 md:hover:shadow-[0_14px_34px_rgba(23,54,73,0.2)] ${
               i !== features.length - 1 ? "md:border-l md:border-gray-200" : ""
             }`}

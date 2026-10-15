@@ -5,32 +5,25 @@ import { ArrowLeft, Building2, Calculator, FileText } from "lucide-react"
 import accountingImage from "../assets/accounting.jpg"
 import vatImage from "../assets/vat.jpg"
 import corporateTaxImage from "../assets/corporate-tax.jpg"
+import { usePage } from "../context/ContentContext.jsx"
+import { HOME_DEFAULTS } from "../data/defaults.js"
 
-const services = [
-  {
-    to: "/services/accounting",
-    icon: Building2,
-    image: accountingImage,
-    title: "المحاسبة ومسك الدفاتر",
-    description: "تنظيم السجلات المالية وإدارة الحسابات بشكل يدعم اتخاذ القرارات ويعزز نمو الأعمال.",
-  },
-  {
-    to: "/services/vat",
-    icon: FileText,
-    image: vatImage,
-    title: "ضريبة القيمة المضافة",
-    description: "من التسجيل إلى الإقرار، نبسط ضريبة القيمة المضافة ونضمن دقة المعالجة والامتثال في كل خطوة.",
-  },
-  {
-    to: "/services/corporate-tax",
-    icon: Calculator,
-    image: corporateTaxImage,
-    title: "ضريبة الشركات",
-    description: "نحول تعقيدات ضريبة الشركات إلى امتثال واضح ودقيق يساعد على حماية أعمالك.",
-  },
+// الروابط والأيقونات والصور ثابتة في الكود، والنصوص بتيجي من لوحة التحكم
+const CARDS = [
+  { to: "/services/accounting", icon: Building2, image: accountingImage },
+  { to: "/services/vat", icon: FileText, image: vatImage },
+  { to: "/services/corporate-tax", icon: Calculator, image: corporateTaxImage },
 ]
 
 function Services() {
+  const { data: c } = usePage("home", HOME_DEFAULTS)
+
+  const services = CARDS.map((card, idx) => ({
+    ...card,
+    title: c[`svc${idx + 1}Title`],
+    description: c[`svc${idx + 1}Text`],
+  }))
+
   const sectionRef = useRef(null)
   const [visible, setVisible] = useState(false)
 
@@ -55,10 +48,10 @@ function Services() {
         <div className="mb-8 text-center md:mb-14">
           <div className="group mb-3 flex cursor-default items-center justify-center gap-3 md:mb-4 md:gap-5">
             <span className="h-[2px] w-8 shrink-0 bg-[#a5854e] transition-all duration-300 group-hover:w-14 md:w-16 md:group-hover:w-24" />
-            <h2 className="text-2xl font-extrabold text-[#173649] transition-colors duration-300 group-hover:text-[#a5854e] md:text-4xl">خدماتنا</h2>
+            <h2 className="text-2xl font-extrabold text-[#173649] transition-colors duration-300 group-hover:text-[#a5854e] md:text-4xl">{c.svcTitle}</h2>
             <span className="h-[2px] w-8 shrink-0 bg-[#a5854e] transition-all duration-300 group-hover:w-14 md:w-16 md:group-hover:w-24" />
           </div>
-          <p className="text-sm font-medium text-[#173649]/70 md:text-base">حلول محاسبية وضريبية متكاملة لنجاح أعمالك</p>
+          <p className="text-sm font-medium text-[#173649]/70 md:text-base">{c.svcSub}</p>
         </div>
 
         <div className="mx-auto grid max-w-lg gap-5 md:max-w-none md:grid-cols-3 md:gap-8">
@@ -87,7 +80,7 @@ function Services() {
                   <p className="mb-5 flex-1 text-sm font-medium leading-7 text-[#173649]/75 md:mb-6 md:text-[15px]">{description}</p>
 
                   <span className="inline-flex items-center gap-2 self-start rounded-lg bg-[#a5854e] px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 group-hover:bg-[#967743] group-hover:shadow-md md:px-6 md:py-3">
-                    اقرأ المزيد
+                    {c.svcButton}
                     <ArrowLeft size={18} className="transition-transform duration-300 group-hover:-translate-x-1" />
                   </span>
                 </div>

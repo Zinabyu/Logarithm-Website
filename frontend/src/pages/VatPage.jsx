@@ -2,60 +2,18 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import { ArrowLeft, Building2, Calculator, Check, ChevronDown, ChevronLeft, ChevronRight, Link2, RefreshCcw, Search, ShieldCheck, BadgeCheck } from "lucide-react"
 import heroImg from "../assets/VAThero.jpg"
+import { usePage } from "../context/ContentContext.jsx"
+import { VAT_DEFAULTS } from "../data/defaults.js"
 
-const risks = [
-  "غرامات إدارية ومالية باهظة نتيجة التأخير أو الخطأ في الإقرارات.",
-  "فقدان الحق في استرداد ضريبة المدخلات بسبب أخطاء صياغة الفواتير الضريبية.",
-  "تعقيدات أثناء المراجعة والتدقيق الضريبي من قبل الهيئة الاتحادية للضرائب.",
+// الأيقونات وشكل كل خدمة ثابتين في الكود: "td" = عنوان + نص، "d" = نص بس
+const SERVICE_ICONS = [Building2, Calculator, RefreshCcw, Search]
+const SERVICE_ITEMS = [
+  ["td", "td", "d"],
+  ["td", "td", "d"],
+  ["d", "d"],
+  ["td", "td", "td"],
 ]
-
-const services = [
-  {
-    icon: Building2,
-    title: "التسجيل وإدارة الملف الضريبي",
-    text: "تقييم حد التسجيل واستخراج الرقم الضريبي وإدارة ملفك الضريبي بكفاءة.",
-    items: [
-      { t: "التسجيل الضريبي", d: "تقييم حد التسجيل (الإلزامي والاختياري) واستخراج الرقم الضريبي بكفاءة وسرعة." },
-      { t: "إلغاء التسجيل الضريبي", d: "إدارة إجراءات إلغاء التسجيل عند تصفية الأعمال أو انخفاض التوريدات عن الحدود القانونية لتجنب غرامات التأخير." },
-      { d: "تحديث البيانات اللازمة للملف الضريبي بشكل دوري." },
-    ],
-  },
-  {
-    icon: Calculator,
-    title: "إعداد وتقديم الإقرارات الضريبية الدورية",
-    text: "مراجعة بيانات المبيعات والمشتريات وتقديم الإقرار في موعده بدقة تامة.",
-    items: [
-      { t: "تجميع ومراجعة البيانات", d: "فحص ومطابقة بيانات المبيعات والمشتريات من واقع الدفاتر المحاسبية." },
-      { t: "تصنيف التوريدات بدقة", d: "بين توريدات خاضعة للضريبة وفقاً للنسبة القياسية، وتوريدات خاضعة للنسبة الصفرية، وتوريدات معفاة، وتوريدات خارج نطاق الضريبة." },
-      { d: "ضمان تقديم الإقرار واحتساب الضريبة الواجبة السداد أو الاسترداد بدقة وقبل المواعيد النهائية." },
-    ],
-  },
-  {
-    icon: RefreshCcw,
-    title: "تقديم طلبات الاسترداد",
-    text: "إعداد النماذج الرسمية لاسترداد رصيد الضريبة الدائن ومتابعتها مع الهيئة.",
-    items: [
-      { d: "إعداد وتقديم النماذج الرسمية لطلبات استرداد رصيد ضريبة القيمة المضافة الدائن بكفاءة عالية بعد التأكد من الأهلية والمستندات المطلوبة." },
-      { d: "متابعة طلبات الاسترداد والرد على استفسارات الهيئة الاتحادية للضرائب." },
-    ],
-  },
-  {
-    icon: Search,
-    title: "المراجعة والتدقيق الضريبي الوقائي",
-    text: "فحص السجلات والفواتير واكتشاف الأخطاء وتصحيحها قبل المراجعة الرسمية.",
-    items: [
-      { t: "الفحص الضريبي الشامل", d: "فحص السجلات والفواتير السابقة للتحقق من سلامة التطبيق واكتشاف الأخطاء وتصحيحها قبل المراجعة الرسمية للهيئة." },
-      { t: "التحقق من نموذج الفواتير", d: "التأكد من استيفاء كافة الفواتير الصادرة والواردة للبيانات الإلزامية المحددة." },
-      { t: "إدارة طلبات استرداد الضريبة", d: "إعداد وتقديم طلبات استرداد الضريبة المؤهلة ومتابعتها مع الهيئة حتى إتمام الاسترداد." },
-    ],
-  },
-]
-
-const why = [
-  { icon: BadgeCheck, title: "خبرة وكيل ضريبي معتمد", text: "تمثيل موثوق ومعرفة عميقة باللوائح والتعاميم الصادرة عن الهيئة الاتحادية للضرائب." },
-  { icon: ShieldCheck, title: "تجنب الغرامات والمخاطر", text: "ضمان تقديم كافة الإقرارات والمعاملات في مواعيدها وبدقة تامة." },
-  { icon: Link2, title: "التكامل مع النظام المحاسبي", text: "ربط معالجة ضريبة القيمة المضافة مباشرة بخدمات مسك الدفاتر والأنظمة المحاسبية لضمان اتساق البيانات." },
-]
+const WHY_ICONS = [BadgeCheck, ShieldCheck, Link2]
 
 const card = "rounded-2xl border border-[#ddd7cc] border-r-4 border-r-[#a5854e] bg-[#fdfcf9] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#a5854e] hover:shadow-xl"
 /* نفس الكارت من غير الشريط الدهبي الجانبي */
@@ -116,8 +74,8 @@ function ServiceCard({ icon: Icon, title, text, items }) {
       <div className={`grid transition-all duration-700 ease-out ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
         <ul className="overflow-hidden">
           <div className="mt-5 space-y-4 border-t-2 border-[#a5854e]/60 pt-5">
-            {items.map(({ t, d }) => (
-              <li key={d} className="flex gap-3 text-[15px] leading-8 text-[#173649]/90">
+            {items.map(({ t, d }, i) => (
+              <li key={i} className="flex gap-3 text-[15px] leading-8 text-[#173649]/90">
                 <span className="mt-3 h-2 w-2 shrink-0 rounded-full bg-[#a5854e]" />
                 <p>{t && <b className="text-[#173649]">{t}: </b>}{d}</p>
               </li>
@@ -135,6 +93,29 @@ function ServiceCard({ icon: Icon, title, text, items }) {
 }
 
 export default function VatPage() {
+  const { data: c } = usePage("vat", VAT_DEFAULTS)
+
+  const risks = [c.risk1, c.risk2, c.risk3]
+
+  const services = SERVICE_ICONS.map((icon, idx) => {
+    const i = idx + 1
+    return {
+      icon,
+      title: c[`service${i}Title`],
+      text: c[`service${i}Text`],
+      items: SERVICE_ITEMS[idx].map((kind, k) => ({
+        t: kind === "td" ? c[`service${i}Item${k + 1}T`] : undefined,
+        d: c[`service${i}Item${k + 1}D`],
+      })),
+    }
+  })
+
+  const why = WHY_ICONS.map((icon, idx) => ({
+    icon,
+    title: c[`why${idx + 1}Title`],
+    text: c[`why${idx + 1}Text`],
+  }))
+
   const [riskIdx, setRiskIdx] = useState(0)
   const prevRisk = () => setRiskIdx((i) => (i - 1 + risks.length) % risks.length)
   const nextRisk = () => setRiskIdx((i) => (i + 1) % risks.length)
@@ -152,19 +133,20 @@ export default function VatPage() {
           <div className="text-white">
             <span className="group mb-4 inline-flex cursor-default items-center gap-2.5 rounded-full border border-[#a5854e]/50 bg-white/10 px-4 py-2 text-xs font-medium text-[#e0c78c] transition-all duration-300 hover:border-[#a5854e] hover:bg-white/15 hover:text-[#f0d9a0] sm:text-sm lg:mb-6 lg:gap-3 lg:px-5 lg:py-2.5">
               <span className="h-2.5 w-2.5 rounded-full bg-[#a5854e] transition-transform duration-300 group-hover:scale-[1.6]" />
-              خدمات ضريبة القيمة المضافة
+              {c.heroBadge}
             </span>
 
             <h1 className="mb-3 max-w-[720px] text-[24px] font-extrabold leading-[1.6] sm:text-[30px] lg:mb-5 lg:text-[38px] lg:leading-[1.65]">
-              <span className="text-[#a5854e]">امتثال ضريبي دقيق وحماية متكاملة</span> لأعمالك من المخاطر والغرامات
+              <span className="text-[#a5854e]">{c.heroGold}</span>{" "}
+              {c.heroRest}
             </h1>
 
             <p className="mb-5 max-w-[650px] text-[14px] font-medium leading-7 text-white/80 lg:mb-7 lg:text-[17px] lg:leading-8">
-              ندير ملفك الضريبي بمهنية عالية؛ بدءاً من التخطيط والتسجيل، وصولاً إلى تقديم الإقرارات والمعالجة الفنية للمعاملات المعقدة وفقاً للقوانين الضريبية في الإمارات العربية المتحدة.
+              {c.heroText}
             </p>
 
             <Link to="/contact" className="animate-soft-bounce inline-flex items-center justify-center gap-2 rounded-xl bg-[#a5854e] px-5 py-2 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:animate-none hover:bg-[#967743] sm:gap-3 sm:px-8 sm:py-4 sm:text-base">
-              احجز استشارتك الآن
+              {c.heroButton}
               <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
             </Link>
           </div>
@@ -187,18 +169,18 @@ export default function VatPage() {
           {/* شارة */}
           <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#e3d5b9] bg-[#f3eee4] px-4 py-1.5 text-sm font-semibold text-[#a5854e]">
             <ShieldCheck size={16} strokeWidth={1.8} />
-            حماية أعمالك
+            {c.riskBadge}
           </span>
 
-          <h2 className="mb-3 text-xl font-extrabold leading-snug md:mb-4 md:text-3xl">أهمية الإدارة الصحيحة لضريبة القيمة المضافة</h2>
+          <h2 className="mb-3 text-xl font-extrabold leading-snug md:mb-4 md:text-3xl">{c.importanceTitle}</h2>
           <p className="mb-5 text-[15px] font-medium leading-8 text-[#173649]/85 md:mb-6">
-            ضريبة القيمة المضافة ليست مجرد 5% تُضاف على الفواتير، بل هي نظام إداري ومحاسبي متكامل يتطلب دقة عالية في التصنيف والمطابقة. الإدارة غير الدقيقة لضريبة القيمة المضافة قد تُعرّض الشركة لـ:
+            {c.importanceIntro}
           </p>
 
           {/* الديسكتوب: قائمة */}
           <ul className="hidden space-y-3 md:block">
-            {risks.map((r) => (
-              <li key={r} className="flex items-start gap-3 text-[15px] font-medium leading-8">
+            {risks.map((r, i) => (
+              <li key={i} className="flex items-start gap-3 text-[15px] font-medium leading-8">
                 <span className="mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#a5854e] text-white"><Check size={14} strokeWidth={3} /></span>
                 {r}
               </li>
@@ -233,12 +215,12 @@ export default function VatPage() {
       {/* Services */}
       <section className="px-5 pb-14 md:pb-20 lg:px-10">
         <div className="mx-auto max-w-7xl">
-          <SectionTitle sub="نقدم في لوغاريتم حلولاً ضريبية شاملة تغطي كافة المراحل والمتطلبات التشريعية:">
-            النطاق التفصيلي لخدماتنا في ضريبة القيمة المضافة
+          <SectionTitle sub={c.servicesSub}>
+            {c.servicesTitle}
           </SectionTitle>
 
           <div className="grid items-start gap-4 md:grid-cols-2 md:gap-7">
-            {services.map((s) => <ServiceCard key={s.title} {...s} />)}
+            {services.map((s, i) => <ServiceCard key={i} {...s} />)}
           </div>
         </div>
       </section>
@@ -247,11 +229,11 @@ export default function VatPage() {
       <section className="px-5 pb-14 md:pb-20 lg:px-10">
         <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[28px] bg-[#173649] px-5 py-10 md:px-12 md:py-14">
           <div className="absolute -bottom-40 -left-20 h-[450px] w-[450px] rounded-full border border-[#a5854e]/20" />
-          <h2 className="relative mb-8 text-center text-xl font-extrabold leading-snug text-white md:mb-10 md:text-3xl">القيمة المضافة والتميز مع "لوغاريتم"</h2>
+          <h2 className="relative mb-8 text-center text-xl font-extrabold leading-snug text-white md:mb-10 md:text-3xl">{c.whyTitle}</h2>
 
           <div className="relative grid gap-7 md:grid-cols-3 md:gap-8">
-            {why.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="group text-center">
+            {why.map(({ icon: Icon, title, text }, i) => (
+              <div key={i} className="group text-center">
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-[#a5854e]/50 text-[#e0c78c] transition-all duration-300 group-hover:-translate-y-1 group-hover:bg-[#a5854e] group-hover:text-white md:mb-4 md:h-14 md:w-14">
                   <Icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={1.6} />
                 </div>
