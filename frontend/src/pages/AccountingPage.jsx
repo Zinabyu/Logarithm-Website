@@ -2,35 +2,15 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import { ArrowLeft, BadgeCheck, BarChart3, ChevronDown, FileText, Landmark, Link2, Package, Settings, ShieldCheck, Target, TrendingUp, Users, Wallet } from "lucide-react"
 import heroImg from "../assets/ACChero.png"
+import { usePage } from "../context/ContentContext.jsx"
+import { ACCOUNTING_DEFAULTS } from "../data/defaults.js"
 
 const heroIcons = [BarChart3, FileText, Settings, TrendingUp]
 
-const importance = [
-  { icon: Wallet, title: "إدارة أفضل للموارد", text: "تنظيم الإيرادات والمصروفات وتتبع التدفقات النقدية أولاً بأول." },
-  { icon: ShieldCheck, title: "الامتثال الضريبي والتنظيمي", text: "تلبية متطلبات الجهات التنظيمية والضريبية بكفاءة." },
-  { icon: Target, title: "تحسين اتخاذ القرارات", text: "رؤية شاملة وشفافية مطلقة لاستشراف المستقبل المالي." },
-]
-
-const scope = [
-  { icon: FileText, title: "تسجيل وتبويب المعاملات المالية اليومية", short: "قيد دقيق لكل المعاملات مع حفظ المستندات.", text: "قيد جميع فواتير المبيعات، المشتريات، المقبوضات، والمصروفات اليومية بدقة متناهية مع الاحتفاظ بالمستندات المؤيدة." },
-  { icon: Landmark, title: "تسوية الحسابات البنكية والمطابقات الدورية", short: "مطابقة الكشوفات البنكية مع سجلاتك.", text: "إجراء تسويات بنكية دورية لمطابقة كشوفات الحسابات البنكية مع السجلات، بالإضافة إلى مطابقة حسابات الموردين والعملاء وبوابات الدفع الإلكتروني." },
-  { icon: Users, title: "إدارة حسابات الذمم المدينة والدائنة", short: "متابعة أعمار الديون وتحصيل المستحقات.", text: "تنظيم ومتابعة أعمار الديون لضمان تحصيل المستحقات في مواعيدها وإدارة الالتزامات تجاه الموردين." },
-  { icon: Package, title: "إدارة وتتبّع الأصول الثابتة", short: "تسجيل الأصول ومتابعة قيمتها الدفترية.", text: "تسجيل الأصول، احتساب الإهلاكات الدورية، ومتابعة القيمة الدفترية للأصول بشكل منتظم." },
-  { icon: Settings, title: "إعداد وإدارة الأنظمة المحاسبية وشجرة الحسابات", short: "شجرة حسابات مخصصة لطبيعة نشاطك.", text: "تصميم وتطوير شجرة حسابات مخصصة لطبيعة نشاطك على البرامج المحاسبية الحديثة لضمان سهولة القيد والتتبع." },
-  {
-    icon: BarChart3,
-    title: "التقارير المالية الدورية والتحليل المالي",
-    short: "تقارير شهرية وربع سنوية وسنوية للإدارة.",
-    text: "توفير تقارير دورية (شهرياً / ربع سنوياً / سنوياً) تمنح الإدارة صورة شفافة ودقيقة عن أداء الشركة:",
-    list: ["قائمة الدخل: لتحديد نتائج الأعمال بدقة وقياس مستويات الربحية.", "قائمة المركز المالي: لرصد الأصول، الالتزامات، وحقوق الملكية في أي لحظة.", "قائمة التدفقات النقدية: لتتبع مصادر الأموال ومصارفها الفعلية.", "تقارير أخرى حسب احتياج الإدارة."],
-  },
-]
-
-const why = [
-  { icon: BadgeCheck, title: "خبرة محاسبية عميقة", text: "تنظيم دقيق للسجلات وإعداد احترافي للقوائم المالية وفقاً لأعلى المعايير والممارسات المهنية المعتمدة." },
-  { icon: Link2, title: "التكامل المحاسبي والتشغيلي", text: "ربط محكم بين حركة العمليات اليومية والتقارير المالية لضمان تطابق البيانات ودعم اتخاذ القرار." },
-  { icon: ShieldCheck, title: "تحصين واستقرار مالي", text: "رقابة مالية وقائية تحمي حقوق منشأتك وتمنحك الوضوح التام للتخطيط والتوسع بكل ثقة." },
-]
+// الأيقونات ثابتة في الكود، والنصوص بتيجي من لوحة التحكم
+const IMPORTANCE_ICONS = [Wallet, ShieldCheck, Target]
+const SCOPE_ICONS = [FileText, Landmark, Users, Package, Settings, BarChart3]
+const WHY_ICONS = [BadgeCheck, Link2, ShieldCheck]
 
 const card = "rounded-2xl border border-[#ddd7cc] border-r-4 border-r-[#a5854e] bg-[#fdfcf9] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#a5854e] hover:shadow-xl"
 const body = "text-[15px] font-medium leading-8 text-[#173649]/85"
@@ -87,8 +67,8 @@ function ScopeCard({ icon: Icon, title, short, text, list }) {
           <p>{text}</p>
           {list && (
             <ul className="mt-3 space-y-2">
-              {list.map((l) => (
-                <li key={l} className="flex gap-3"><span className="mt-3 h-2 w-2 shrink-0 rounded-full bg-[#a5854e]" />{l}</li>
+              {list.map((l, i) => (
+                <li key={i} className="flex gap-3"><span className="mt-3 h-2 w-2 shrink-0 rounded-full bg-[#a5854e]" />{l}</li>
               ))}
             </ul>
           )}
@@ -101,6 +81,31 @@ function ScopeCard({ icon: Icon, title, short, text, list }) {
 }
 
 export default function AccountingPage() {
+  const { data: c } = usePage("accounting", ACCOUNTING_DEFAULTS)
+
+  const importance = IMPORTANCE_ICONS.map((icon, idx) => ({
+    icon,
+    title: c[`importance${idx + 1}Title`],
+    text: c[`importance${idx + 1}Text`],
+  }))
+
+  const scope = SCOPE_ICONS.map((icon, idx) => {
+    const i = idx + 1
+    return {
+      icon,
+      title: c[`scope${i}Title`],
+      short: c[`scope${i}Short`],
+      text: c[`scope${i}Text`],
+      list: i === 6 ? [1, 2, 3, 4].map((j) => c[`scope6List${j}`]) : undefined,
+    }
+  })
+
+  const why = WHY_ICONS.map((icon, idx) => ({
+    icon,
+    title: c[`why${idx + 1}Title`],
+    text: c[`why${idx + 1}Text`],
+  }))
+
   const [more, setMore] = useState(false)
 
   return (
@@ -125,21 +130,21 @@ export default function AccountingPage() {
           <div className="min-w-0 flex-1 text-white lg:max-w-[640px]">
             <span className="group mb-5 inline-flex max-w-full cursor-default items-center gap-2 rounded-full border border-[#a5854e]/30 bg-white/10 px-4 py-2 text-xs font-medium text-[#e8dcc0] transition-all duration-300 hover:border-[#a5854e]/70 hover:bg-white/15 hover:text-white sm:gap-3 sm:px-5 sm:text-sm">
               <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#a5854e] transition-transform duration-300 group-hover:scale-[1.6]" />
-              خدمات المحاسبة ومسك الدفاتر
+              {c.heroBadge}
               <span className="h-[2px] w-8 shrink-0 bg-[#d9bf86] sm:w-12" />
             </span>
 
             <h1 className="mb-4 text-[22px] font-extrabold leading-[1.6] sm:text-[28px] lg:mb-5 lg:text-[32px]">
-              <span className="text-[#a5854e]">رؤية مالية واضحة لإدارة أعمالك..</span> وأساس متين لامتثالك الضريبي
+              <span className="text-[#a5854e]">{c.heroGold}</span> {c.heroRest}
             </h1>
 
             <p className="mb-5 text-[14px] font-medium leading-7 text-white/80 lg:mb-7 lg:text-[16px] lg:leading-8">
-              تحويل البيانات المالية المعقدة إلى سجلات دقيقة ومنظمة، تمنحك السيطرة الكاملة وتسهل عملية اتخاذ القرار.
+              {c.heroText}
             </p>
 
             <Link to="/contact" className="animate-soft-bounce inline-flex items-center justify-center gap-2 rounded-xl bg-[#a5854e] px-5 py-2 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:animate-none hover:bg-[#967743] sm:gap-3 sm:px-7 sm:py-2.5 sm:text-base">
               <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-              احجز استشارتك الآن
+              {c.heroButton}
             </Link>
           </div>
         </div>
@@ -149,21 +154,17 @@ export default function AccountingPage() {
       <section className="px-3 py-12 sm:px-5 md:py-20 lg:px-10">
         <div className="mx-auto grid max-w-7xl items-start gap-8 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
           <div className="px-1 sm:px-0">
-            <h2 className="mb-4 text-xl font-extrabold md:text-3xl">أهمية مسك الدفاتر المنظم</h2>
-            <p className={body}>
-              إنّ مسك الدفاتر المحاسبي المنتظم ليس مجرد رصد تقليدي للأرقام أو مجرد استيفاء لشروط قانونية شكلية؛ بل هو الركيزة الأساسية والمرآة الحقيقية لأداء عملك، والبوصلة التي توجّه الإدارة نحو اتخاذ القرارات الاستثمارية والتطويرية الصحيحة.
-            </p>
+            <h2 className="mb-4 text-xl font-extrabold md:text-3xl">{c.importanceTitle}</h2>
+            <p className={body}>{c.importanceText1}</p>
             <Expand open={more}>
-              <p className={`${body} pt-2`}>
-                فمن خلال تنظيم الإيرادات والمصروفات بدقة، وتتبع التدفقات النقدية أولاً بأول، نوفر لمنشأتك أساساً متيناً لا يقتصر فقط على تلبية متطلبات الامتثال الضريبي والجهات التنظيمية بكفاءة، بل يمنحك الرؤية الشاملة والشفافية المطلقة لاستشراف المستقبل المالي وتنمية أعمالك بثقة.
-              </p>
+              <p className={`${body} pt-2`}>{c.importanceText2}</p>
             </Expand>
             <MoreButton open={more} onClick={() => setMore(!more)} />
           </div>
 
           <div className="grid gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-1">
-            {importance.map(({ icon: Icon, title, text }) => (
-              <div key={title} className={`${card} group px-4 py-4 md:p-5`}>
+            {importance.map(({ icon: Icon, title, text }, i) => (
+              <div key={i} className={`${card} group px-4 py-4 md:p-5`}>
                 <div className="mb-2 flex items-center gap-3">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#a5854e] text-white transition-colors duration-500 group-hover:text-[#f5e6b8] lg:hidden">
                     <Icon className="h-4 w-4" strokeWidth={1.7} />
@@ -181,12 +182,12 @@ export default function AccountingPage() {
       {/* Scope */}
       <section className="px-3 pb-12 sm:px-5 md:pb-20 lg:px-10">
         <div className="mx-auto max-w-7xl">
-          <SectionTitle sub="نحن في لوغاريتم نتكفل بكافة العمليات والمهام المحاسبية اليومية والدورية لضمان انتظام سجلاتك المالية وفق معايير إعداد التقارير المالية الدولية:">
-            النطاق التفصيلي الشامل لإدارة الحسابات ومسك الدفاتر
+          <SectionTitle sub={c.scopeSub}>
+            {c.scopeTitle}
           </SectionTitle>
 
           <div className="grid items-start gap-3 md:grid-cols-2 md:gap-7">
-            {scope.map((s) => <ScopeCard key={s.title} {...s} />)}
+            {scope.map((s, i) => <ScopeCard key={i} {...s} />)}
           </div>
 
           <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#e3d5b9] bg-[#f3eee4] px-4 py-4 md:mt-8 md:items-center md:gap-5 md:p-6">
@@ -196,7 +197,7 @@ export default function AccountingPage() {
               <ArrowLeft className="relative h-4 w-4 text-[#a5854e] md:h-8 md:w-8" strokeWidth={2.6} />
             </span>
             <p className="text-sm font-bold leading-7 text-[#173649] md:text-base md:leading-8">
-              تضمن <span className="font-extrabold text-[#a5854e]">لوغاريتم</span> أن تكون مخرجات جميع العمليات المحاسبية عبارة عن قاعدة بيانات ضريبية صلبة متوافقة بالكامل مع الأنظمة والتشريعات المحلية في دولة الإمارات العربية المتحدة.
+              {c.noteStart} <span className="font-extrabold text-[#a5854e]">{c.noteBrand}</span> {c.noteEnd}
             </p>
           </div>
         </div>
@@ -206,11 +207,11 @@ export default function AccountingPage() {
       <section className="px-5 pb-14 md:pb-16 lg:px-10">
         <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[28px] bg-[#173649] px-5 py-10 md:px-12 md:py-14">
           <div className="absolute -bottom-40 -left-20 h-[450px] w-[450px] rounded-full border border-[#a5854e]/20" />
-          <h2 className="relative mb-8 text-center text-xl font-extrabold leading-snug text-white md:mb-10 md:text-3xl">لماذا تختار لوغاريتم لإدارة حساباتك؟</h2>
+          <h2 className="relative mb-8 text-center text-xl font-extrabold leading-snug text-white md:mb-10 md:text-3xl">{c.whyTitle}</h2>
 
           <div className="relative grid gap-7 md:grid-cols-3 md:gap-8">
-            {why.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="group text-center">
+            {why.map(({ icon: Icon, title, text }, i) => (
+              <div key={i} className="group text-center">
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-[#a5854e]/50 text-[#e0c78c] transition-all duration-300 group-hover:-translate-y-1 group-hover:bg-[#a5854e] group-hover:text-white md:mb-4 md:h-14 md:w-14">
                   <Icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={1.6} />
                 </div>

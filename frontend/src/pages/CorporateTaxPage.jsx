@@ -11,98 +11,8 @@ import {
   Handshake,
 } from "lucide-react"
 import heroImg from "../assets/hero-illustration.jpg"
-
-const importance = [
-  {
-    title: "غرامات إدارية ومالية",
-    text: "غرامات إدارية ومالية لعدم التسجيل أو التأخر في تقديم الإقرارات السنوية.",
-  },
-  {
-    title: "مخاطر إعادة التقييم",
-    text: "إعادة تقييم ضريبي عالي المخاطر بسبب عدم تعديل الأرباح المحاسبية وفق قواعد الامتثال الضريبي.",
-  },
-  {
-    title: "فقدان التسهيلات",
-    text: "فقدان الاستفادة من الإعفاءات والتسهيلات المتاحة مثل تسهيلات الأعمال الصغيرة.",
-  },
-]
-
-const services = [
-  {
-    icon: Building2,
-    title: "التسجيل الضريبي وتقييم الجاهزية",
-    text: "نساعدك على التسجيل لضريبة الشركات وتقييم جاهزية منشأتك للالتزامات الضريبية.",
-    details: [
-      {
-        title: "التسجيل لضريبة الشركات",
-        text: "استخراج الرقم الضريبي للشركة وتحديد الفترات الضريبية المعتمدة رسمياً عبر بوابة الهيئة الاتحادية للضرائب.",
-      },
-      {
-        title: "تقييم الجاهزية والآثار الضريبية",
-        text: "دراسة القوائم المالية ونموذج العمل لتحديد الأرباح الخاضعة للضريبة والالتزامات المتوقعة.",
-      },
-    ],
-  },
-  {
-    icon: Calculator,
-    title: "التخطيط الضريبي وتحديد الدخل الخاضع للضريبة",
-    text: "نراجع البيانات المالية ونحدد الوعاء الضريبي الصحيح بما يتوافق مع القوانين.",
-    details: [
-      {
-        title: "تسوية الأرباح المحاسبية مع الدخل الضريبي",
-        text: "إجراء التعديلات القانونية اللازمة على صافي الربح المحاسبي لإيجاد وعاء الضريبة الصحيح.",
-      },
-    ],
-  },
-  {
-    icon: FileText,
-    title: "إعداد وتقديم الإقرارات الضريبية السنوية",
-    text: "إعداد الملف الضريبي والإقرار السنوي وتقديمه ضمن المواعيد القانونية.",
-    details: [
-      {
-        title: "تجهيز واعتماد الملف الضريبي السنوي",
-        text: "إعداد كافة التقارير والجداول المرفقة وتطبيقها مع القوائم المالية المدققة.",
-      },
-      {
-        title: "تقديم الإقرار وحساب الضريبة",
-        text: "تقديم الإقرار الضريبي السنوي ضمن المهلة القانونية المحددة لضمان الامتثال التام وتجنب أي تأخيرات.",
-      },
-    ],
-  },
-  {
-    icon: ShieldCheck,
-    title: "التسهيلات والأنظمة الخاصة",
-    text: "نساعدك على الاستفادة من التسهيلات والحوافز الضريبية المتاحة قانونياً.",
-    details: [
-      {
-        title: "تسهيلات الأعمال الصغيرة",
-        text: "تقييم استحقاق الشركة لاستغلال حوافز وتسهيلات الأعمال الصغيرة المتاحة وتطبيقها رسمياً.",
-      },
-      {
-        title: "نظام المناطق الحرة",
-        text: "دراسة وتطبيق الشروط والأحكام الفنية الخاصة بشركات المناطق الحرة للاستفادة من نسبة الضريبة 0% على الدخل المؤهل.",
-      },
-    ],
-  },
-]
-
-const why = [
-  {
-    icon: BadgeCheck,
-    title: "وكيل ضريبي معتمد",
-    text: "تمثيل موثوق وخبرة عميقة باللوائح والقرارات الوزارية والتوضيحات الصادرة عن الهيئة الاتحادية للضرائب.",
-  },
-  {
-    icon: FileText,
-    title: "التكامل بين المحاسبة والضريبة",
-    text: "ضمان اتساق القوائم المالية المعتمدة في مسك الدفاتر مع الإقرار الضريبي لتجنب أي فروقات فنية.",
-  },
-  {
-    icon: Handshake,
-    title: "حماية واستقرار مالي",
-    text: "حلول وقائية مخصصة تحمي شركتك وتمنحك الطمأنينة الكاملة لمواصلة التوسع.",
-  },
-]
+import { usePage } from "../context/ContentContext.jsx"
+import { CORPORATE_TAX_DEFAULTS } from "../data/defaults.js"
 
 /* الديسكتوب: خطين جنب العنوان.
    الموبايل: خط تحت العنوان بطول 20% من طوله، والهوفر 80% */
@@ -175,8 +85,8 @@ function ServiceCard({ icon, title, text, details }) {
         }`}
       >
         <div className="mt-4 space-y-4 border-t-2 border-[#a5854e]/60 pt-4 md:mt-5 md:pt-5">
-          {details.map((d) => (
-            <div key={d.title}>
+          {details.map((d, i) => (
+            <div key={i}>
               <h4 className="mb-1.5 text-[15px] font-bold text-[#173649] md:mb-2 md:text-base">{d.title}</h4>
               <p className="text-[13px] leading-7 text-[#173649]/75 md:text-sm">{d.text}</p>
             </div>
@@ -196,6 +106,38 @@ function ServiceCard({ icon, title, text, details }) {
 }
 
 export default function CorporateTaxPage() {
+  const { data: c } = usePage("corporate-tax", CORPORATE_TAX_DEFAULTS)
+
+  // الأيقونات وعدد التفاصيل ثابتين في الكود، والنصوص بتيجي من لوحة التحكم
+  const importance = [1, 2, 3].map((i) => ({
+    title: c[`importance${i}Title`],
+    text: c[`importance${i}Text`],
+  }))
+
+  const services = [
+    { icon: Building2, n: 2 },
+    { icon: Calculator, n: 1 },
+    { icon: FileText, n: 2 },
+    { icon: ShieldCheck, n: 2 },
+  ].map(({ icon, n }, idx) => {
+    const i = idx + 1
+    return {
+      icon,
+      title: c[`service${i}Title`],
+      text: c[`service${i}Text`],
+      details: Array.from({ length: n }, (_, k) => ({
+        title: c[`service${i}Detail${k + 1}Title`],
+        text: c[`service${i}Detail${k + 1}Text`],
+      })),
+    }
+  })
+
+  const why = [BadgeCheck, FileText, Handshake].map((icon, idx) => ({
+    icon,
+    title: c[`why${idx + 1}Title`],
+    text: c[`why${idx + 1}Text`],
+  }))
+
   return (
     <div className="bg-[#f7f5f0] text-[#173649]">
 
@@ -210,20 +152,20 @@ export default function CorporateTaxPage() {
             <div className="text-white">
               <div className="group mb-4 inline-flex cursor-default items-center gap-2.5 rounded-full border border-[#a5854e]/50 bg-white/10 px-4 py-2 text-xs text-[#e0c78c] sm:text-sm lg:mb-7 lg:gap-3 lg:px-5 lg:py-2.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#a5854e] transition-transform duration-300 group-hover:scale-[1.45]" />
-                خدمات ضريبة الشركات
+                {c.heroBadge}
               </div>
 
               <h1 className="mb-3 max-w-[720px] text-[24px] font-bold leading-[1.6] text-white sm:text-[30px] lg:mb-6 lg:text-[39px] lg:leading-[1.65]">
-                <span className="text-[#a5854e]">تخطيط ضريبي استراتيجي وامتثال كامل</span>{" "}
-                لحماية ربحية أعمالك وتسهيل <span className="text-[#a5854e]">نموها</span>
+                <span className="text-[#a5854e]">{c.heroGold1}</span>{" "}
+                {c.heroMid} <span className="text-[#a5854e]">{c.heroGold2}</span>
               </h1>
 
               <p className="mb-5 max-w-[650px] text-[14px] leading-7 text-white/75 lg:mb-8 lg:text-[17px] lg:leading-8">
-                نساعد شركتك على استيفاء متطلبات قانون ضريبة الشركات بأعلى قدر من الدقة، مع الاستفادة التامة من الإعفاءات والتسهيلات المتاحة قانونياً.
+                {c.heroText}
               </p>
 
               <Link to="/contact" className="animate-soft-bounce inline-flex items-center justify-center gap-2 rounded-xl bg-[#a5854e] px-5 py-2 text-sm font-bold text-white shadow-lg transition-all duration-300 hover:animate-none hover:bg-[#967743] sm:gap-3 sm:px-8 sm:py-4 sm:text-base">
-                احجز استشارتك الآن
+                {c.heroButton}
                 <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </Link>
             </div>
@@ -240,17 +182,15 @@ export default function CorporateTaxPage() {
       {/* Importance */}
       <section className="py-12 md:py-20">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
-          <SectionTitle>أهمية الإدارة الصحيحة لضريبة الشركات</SectionTitle>
+          <SectionTitle>{c.importanceTitle}</SectionTitle>
 
           <p className="mx-auto mb-8 max-w-3xl text-center text-[14px] leading-7 text-[#173649]/80 md:mb-12 md:text-[15px] md:leading-8">
-            مع تطبيق مرسوم بقانون اتحادي بشأن الضريبة على الشركات والأعمال، أصبحت
-            جميع الشركات والأنشطة التجارية في الإمارات ملزمة بالامتثال للمتطلبات
-            الضريبية وتحديد دخلها الخاضع للضريبة بدقة.
+            {c.importanceIntro}
           </p>
 
           <div className="grid gap-4 md:grid-cols-3 md:gap-6">
-            {importance.map((item) => (
-              <ImportanceCard key={item.title} {...item} />
+            {importance.map((item, i) => (
+              <ImportanceCard key={i} {...item} />
             ))}
           </div>
         </div>
@@ -259,11 +199,11 @@ export default function CorporateTaxPage() {
       {/* Services */}
       <section className="py-12 md:py-20">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
-          <SectionTitle>خدماتنا المتخصصة</SectionTitle>
+          <SectionTitle>{c.servicesTitle}</SectionTitle>
 
           <div className="grid items-start gap-4 md:grid-cols-2 md:gap-7">
-            {services.map((s) => (
-              <ServiceCard key={s.title} {...s} />
+            {services.map((s, i) => (
+              <ServiceCard key={i} {...s} />
             ))}
           </div>
         </div>
@@ -272,11 +212,11 @@ export default function CorporateTaxPage() {
       {/* Why */}
       <section className="py-12 md:py-20">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
-          <SectionTitle>لماذا لوغاريتم؟</SectionTitle>
+          <SectionTitle>{c.whyTitle}</SectionTitle>
 
           <div className="grid gap-4 md:grid-cols-3 md:gap-6">
-            {why.map((item) => (
-              <InfoCard key={item.title} {...item} />
+            {why.map((item, i) => (
+              <InfoCard key={i} {...item} />
             ))}
           </div>
         </div>

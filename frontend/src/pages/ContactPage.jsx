@@ -1,43 +1,10 @@
 import { useState } from "react"
 import { MapPin, Phone, Mail, MessageCircle, Send, ArrowLeft } from "lucide-react"
 import logo from "../assets/logo.jpg"
-
-const PHONE = "+971501234567"
-const WHATSAPP_NUMBER = "971501234567"
-const EMAIL = "info@logarithm.ae"
+import { usePage } from "../context/ContentContext.jsx"
+import { CONTACT_DEFAULTS, SITE_DEFAULTS } from "../data/defaults.js"
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
-
-const contactCards = [
-  {
-    icon: MapPin,
-    title: "الموقع",
-    lines: ["دبي - الإمارات العربية المتحدة", "بيزنس باي - الطابق 12"],
-    action: "عرض على الخريطة",
-    href: "https://www.google.com/maps/search/?api=1&query=Business+Bay+Dubai",
-  },
-  {
-    icon: Phone,
-    title: "الهاتف",
-    lines: ["+971 50 123 4567", "من 9 صباحاً إلى 6 مساءً"],
-    action: "اتصل بنا",
-    href: `tel:${PHONE}`,
-  },
-  {
-    icon: Mail,
-    title: "البريد الإلكتروني",
-    lines: [EMAIL, "نرد على رسائلك في أقرب وقت"],
-    action: "راسلنا",
-    href: `mailto:${EMAIL}`,
-  },
-  {
-    icon: MessageCircle,
-    title: "واتساب",
-    lines: ["تواصل معنا عبر واتساب", "للاستفسارات السريعة"],
-    action: "ابدأ المحادثة",
-    href: `https://wa.me/${WHATSAPP_NUMBER}`,
-  },
-]
 
 const initialValues = { name: "", email: "", phone: "", message: "" }
 
@@ -84,22 +51,44 @@ function ContactCard({ icon: Icon, title, lines, action, href }) {
       <h3 className="mb-4 text-xl font-extrabold text-[#173649]">{title}</h3>
 
       <div className="mb-6 flex-1 space-y-2 text-[15px] font-medium leading-7 text-[#173649]/90">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
+        {lines.map((line, i) => (
+          <p key={i}>{line}</p>
         ))}
       </div>
 
-     <span className="group/action inline-flex cursor-pointer items-center gap-2 text-[15px] font-bold text-[#8a6a35] transition-all duration-300 hover:scale-105 hover:text-[#5c3d0e]">
-     {action}
-     <ArrowLeft
-      size={16}
-    className="transition-transform duration-300 group-hover/action:-translate-x-1" />
-    </span>
+      <span className="group/action inline-flex cursor-pointer items-center gap-2 text-[15px] font-bold text-[#8a6a35] transition-all duration-300 hover:scale-105 hover:text-[#5c3d0e]">
+        {action}
+        <ArrowLeft size={16} className="transition-transform duration-300 group-hover/action:-translate-x-1" />
+      </span>
     </a>
   )
 }
 
 export default function ContactPage() {
+  const { data: c } = usePage("contact", CONTACT_DEFAULTS)
+  // بيانات التواصل مشتركة مع الفوتر، فبتيجي من الإعدادات العامة
+  const { data: s } = usePage("site", SITE_DEFAULTS)
+
+  // روابط الاتصال بتتبني من البيانات اللي في لوحة التحكم، وبتتنضف عشان متبوظش
+  const email = s.email.trim()
+  const phoneLink = s.phone.replace(/[^\d+]/g, "")
+  const whatsappLink = s.whatsappNumber.replace(/\D/g, "")
+  const mapHref = /^https?:\/\//i.test(s.mapLink.trim()) ? s.mapLink.trim() : "#"
+
+  // الأيقونات ثابتة في الكود، والنصوص بتيجي من لوحة التحكم
+  const contactCards = [
+    { icon: MapPin, title: c.card1Title, lines: [c.card1Line1, c.card1Line2], action: c.card1Action, href: mapHref },
+    { icon: Phone, title: c.card2Title, lines: [s.phone, c.card2Line2], action: c.card2Action, href: `tel:${phoneLink}` },
+    { icon: Mail, title: c.card3Title, lines: [email, c.card3Line2], action: c.card3Action, href: `mailto:${email}` },
+    {
+      icon: MessageCircle,
+      title: c.card4Title,
+      lines: [c.card4Line1, c.card4Line2],
+      action: c.card4Action,
+      href: `https://wa.me/${whatsappLink}`,
+    },
+  ]
+
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
   const [sent, setSent] = useState(false)
@@ -135,7 +124,7 @@ export default function ContactPage() {
     const subject = `رسالة جديدة من ${values.name}`
     const body = `الاسم: ${values.name}\nالبريد: ${values.email}\nالهاتف: ${values.phone || "-"}\n\n${values.message}`
 
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 
     setSent(true)
     setValues(initialValues)
@@ -146,11 +135,11 @@ export default function ContactPage() {
     <div className="bg-[#f7f5f0] text-[#173649]">
       {/* Title */}
       <section className="px-5 pb-12 pt-16 text-center">
-        <h1 className="mb-5 text-4xl font-extrabold md:text-5xl">تواصل معنا</h1>
+        <h1 className="mb-5 text-4xl font-extrabold md:text-5xl">{c.title}</h1>
         <p className="mx-auto max-w-xl text-[16px] font-medium leading-9 text-[#173649]/85">
-          نحن هنا لمساعدتك والإجابة على استفساراتك.
+          {c.introLine1}
           <br />
-          لا تتردد في التواصل معنا عبر أي وسيلة تناسبك.
+          {c.introLine2}
         </p>
         <div className="mx-auto mt-6 h-1 w-20 rounded-full bg-[#a5854e]" />
       </section>
@@ -158,8 +147,8 @@ export default function ContactPage() {
       {/* Contact cards */}
       <section className="px-5 pb-16 lg:px-10">
         <div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {contactCards.map((card) => (
-            <ContactCard key={card.title} {...card} />
+          {contactCards.map((card, i) => (
+            <ContactCard key={i} {...card} />
           ))}
         </div>
       </section>
@@ -168,18 +157,12 @@ export default function ContactPage() {
       <section className="px-5 pb-24 lg:px-10">
         <div className="mx-auto grid max-w-7xl items-center gap-10 md:grid-cols-2">
           <div className="hidden justify-center md:flex">
-            <img
-              src={logo}
-              alt=""
-              className="w-72 opacity-[0.08] mix-blend-multiply"
-            />
+            <img src={logo} alt="" className="w-72 opacity-[0.08] mix-blend-multiply" />
           </div>
 
           <div>
-            <h2 className="mb-2 text-2xl font-extrabold">أو اترك لنا رسالة</h2>
-            <p className="mb-7 text-[16px] font-medium text-[#173649]/85">
-              سيتم التواصل معك في أقرب وقت ممكن.
-            </p>
+            <h2 className="mb-2 text-2xl font-extrabold">{c.formTitle}</h2>
+            <p className="mb-7 text-[16px] font-medium text-[#173649]/85">{c.formSub}</p>
 
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -190,7 +173,8 @@ export default function ContactPage() {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     placeholder="الاسم الكامل *"
-                    className={inputClass(errors.name)}/>
+                    className={inputClass(errors.name)}
+                  />
                   <FieldError text={errors.name} />
                 </div>
 
@@ -214,7 +198,8 @@ export default function ContactPage() {
                 value={values.phone}
                 onChange={handleChange}
                 placeholder="رقم الهاتف (اختياري)"
-                className={inputClass(false)} />
+                className={inputClass(false)}
+              />
 
               <div>
                 <textarea
@@ -224,22 +209,20 @@ export default function ContactPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   placeholder="رسالتك *"
-                  className={`${inputClass(errors.message)} resize-none`}/>
+                  className={`${inputClass(errors.message)} resize-none`}
+                />
                 <FieldError text={errors.message} />
               </div>
 
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#a5854e] px-6 py-4 text-[16px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#967743] hover:shadow-md" >
-                إرسال الرسالة
+                className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#a5854e] px-6 py-4 text-[16px] font-bold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#967743] hover:shadow-md"
+              >
+                {c.formButton}
                 <Send size={18} className="-scale-x-100" />
               </button>
 
-              {sent && (
-                <p className="text-center text-sm font-bold text-[#a5854e]">
-                  تم فتح تطبيق البريد لإرسال رسالتك. شكراً لتواصلك معنا.
-                </p>
-              )}
+              {sent && <p className="text-center text-sm font-bold text-[#a5854e]">{c.sentMessage}</p>}
             </form>
           </div>
         </div>
